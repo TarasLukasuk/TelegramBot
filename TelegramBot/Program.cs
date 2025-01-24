@@ -42,7 +42,7 @@ namespace TelegramBot
                 if (message.Text.ToLower() == "/start")
                 {
                     userStates[chatId] = "start";
-                    await client.SendTextMessageAsync(chatId,"Вітаю у текстовому квесті! Ви прокидаєтесь у темній кімнаті. Що робити далі?\n1. Увімкнути світло\n2. Шукати вихід\n3. Залишатися на місці");
+                    await client.SendTextMessageAsync(chatId,"Вітаю у текстовому квесті! Ви прокидаєтесь у темній кімнаті. Що робити далі?\n1. Увімкнути світло\n2. Шукати вихід\n3. Залишатися на місці"); // test
                 }
             }
         }
