@@ -64,7 +64,7 @@ namespace TelegramBot
 
         private static Task Error(ITelegramBotClient client, Exception exception, HandleErrorSource handle, CancellationToken cancellation)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // Прийшов?ghhgfghg
         }
     }
 }
