@@ -103,6 +103,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="Helpers\Validator.cs" />
+    <Compile Include="Keyboards\Keyboard.cs" />
+    <Compile Include="Messages\MessageAbstract.cs" />
+    <Compile Include="Messages\StartMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
