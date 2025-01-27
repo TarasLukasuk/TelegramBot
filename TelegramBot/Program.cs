@@ -27,25 +27,49 @@ namespace TelegramBot
             Console.ReadKey();
         }
 
+
         private async static Task HandlerUpDateAsync(ITelegramBotClient client, Update update, CancellationToken cancellation)
         {
-            Message message = update.Message;
-            long chatId = message.Chat.Id;
+           MessageAbstract startMessage = new StartMessage(client, update);
 
-            if (Validator.IsNotNull(message.Text))
+            if (update.Message != null) 
             {
-                if (Validator.IsTextLower(message.Text, "/start"))
+                Message message = update.Message;
+
+                if (Validator.IsNotNull(message.Text))
                 {
-                    StartMessage startMessage = new StartMessage(client, chatId);
-                    await startMessage.HandlerMessageAsync();
+                    if (Validator.IsTextLower(message.Text, "/start"))
+                    {
+                        await startMessage.HandlerMessageAsync();
+                    }
+                }
+            }
+
+            if (update.CallbackQuery != null)
+            {
+                switch (update.CallbackQuery.Data)
+                {
+                    case "btn_0":
+                        
+                        break;
+                    case "btn_1":
+                        
+                        break;
+                    case "btn_2":
+                        
+                        break;
+                    case "btn_3":
+                        
+                        break;
                 }
             }
         }
 
 
-        private static Task HandlerErrorAsync(ITelegramBotClient client, Exception exception, HandleErrorSource handle, CancellationToken cancellation)
+        private static async Task HandlerErrorAsync(ITelegramBotClient client, Exception exception, HandleErrorSource handle, CancellationToken cancellation)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(exception.Message);
+            await Task.CompletedTask;
         }
     }
 }
