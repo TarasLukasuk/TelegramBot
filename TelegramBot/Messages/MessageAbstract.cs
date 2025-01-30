@@ -1,12 +1,28 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace TelegramBot.Messages
 {
     internal abstract class MessageAbstract
     {
-        internal abstract string MessageText { get; }
-        internal abstract string[] Butthons { get; }
+        public MessageAbstract(ITelegramBotClient client, Update update)
+        {
+            if (client is null)
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
 
-        internal abstract Task HandlerMessageAsync();
+            if (update is null)
+            {
+                throw new ArgumentNullException(nameof(update));
+            }
+        }
+
+        public abstract string MessageText { get; }
+        public abstract string[] Buttons { get; }
+
+        public abstract Task SendMessageAsync();
     }
 }

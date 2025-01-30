@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using TelegramBot.Helpers;
+using Telegram.Bot.Types.Enums;
 using TelegramBot.Messages;
 
 namespace TelegramBot
@@ -14,6 +14,14 @@ namespace TelegramBot
     class Program
     {
         static void Main(string[] args)
+        {
+            Program program = new Program();
+            program.RunBot();
+
+            Console.ReadKey();
+        }
+
+        private void RunBot()
         {
             using (FileStream file = new FileStream(@"F:\TelegramBot\TelegramBot\ApiKey.json", FileMode.Open, FileAccess.Read))
             {
@@ -23,48 +31,27 @@ namespace TelegramBot
                     client.StartReceiving(HandlerUpDateAsync, HandlerErrorAsync);
                 }
             }
-
-            Console.ReadKey();
         }
 
 
-        private async static Task HandlerUpDateAsync(ITelegramBotClient client, Update update, CancellationToken cancellation)
+
+        private async Task HandlerUpDateAsync(ITelegramBotClient client, Update update, CancellationToken cancellation)
         {
-           MessageAbstract startMessage = new StartMessage(client, update);
-
-            if (update.Message != null) 
+            if (update.Type == UpdateType.Message && update.Message != null)
             {
-                Message message = update.Message;
-
-                if (Validator.IsNotNull(message.Text))
+                switch (update.Message.Text.ToLower())
                 {
-                    if (Validator.IsTextLower(message.Text, "/start"))
-                    {
-                        await startMessage.HandlerMessageAsync();
-                    }
-                }
-            }
-
-            if (update.CallbackQuery != null)
-            {
-                switch (update.CallbackQuery.Data)
-                {
-                    case "btn_0":
-                        
+                    case "/start":
+                        StartMessage startMessage = new StartMessage(client, update);
+                        await startMessage.SendMessageAsync();
                         break;
-                    case "btn_1":
-                        
-                        break;
-                    case "btn_2":
-                        
-                        break;
-                    case "btn_3":
-                        
+                    case "продовжити працювати над дипломом — ти вирішуєш не ризикувати та сконцентруватися на захисті.":
+                        DontRisk dontRisk = new DontRisk(client, update);
+                        await dontRisk.SendMessageAsync();
                         break;
                 }
             }
         }
-
 
         private static async Task HandlerErrorAsync(ITelegramBotClient client, Exception exception, HandleErrorSource handle, CancellationToken cancellation)
         {

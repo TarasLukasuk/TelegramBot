@@ -6,38 +6,33 @@ using TelegramBot.Keyboards;
 
 namespace TelegramBot.Messages
 {
-    class StartMessage : MessageAbstract
+    internal class StartMessage : MessageAbstract
     {
         private readonly ITelegramBotClient _client;
         private readonly Update _update;
 
-        internal override string MessageText => "Ти студент університету на інформаційних технологіях. До захисту диплому залишилося дві тижні. Твій проєкт поки не готовий, але ти вже маєш чіткий план його завершити. Проте сьогодні вранці тобі прийшло неочікуване запрошення на співбесіду від відомої IT-компанії.";
-        internal override string[] Butthons => new[] { "Почати пошук інформації для проекту.", "Звернутися до друзів з університету за допомогою.", "Зосередитися тільки на написанні коду.", "Знайти наукового керівника для додаткових порад." };
-
-        public StartMessage(ITelegramBotClient telegramBotClient, Update update)
+        public StartMessage(ITelegramBotClient client, Update update) : base(client, update)
         {
-            if (telegramBotClient is null)
-            {
-                throw new ArgumentNullException(nameof(telegramBotClient));
-            }
-
-            if (update is null)
-            {
-                throw new ArgumentNullException(nameof(update));
-            }
-
-            _client = telegramBotClient;
+            _client = client;
             _update = update;
         }
 
+        public override string MessageText =>
+            "Ти — студент четвертого курсу ІТ-спеціальності. До захисту диплома залишилося всього кілька місяців. " +
+            "Всі твої одногрупники вже давно поринули в написання роботи, але сьогодні твій спокій порушило несподіване повідомлення. " +
+            "На екрані ноутбука світиться лист: Запрошуємо вас на співбесіду до нашої компанії. Але перш ніж ми зможемо вас прийняти, " +
+            "необхідно пройти випробування: створити невеликий проєкт за визначений термін. Деталі в додатку. Ти перечитуєш повідомлення ще раз. " +
+            "Це шанс! Велика компанія, можливість одразу після випуску отримати престижну роботу. Але ж диплом ніхто не скасовував...";
 
-        [Obsolete]
-        internal override async Task HandlerMessageAsync()
+        public override string[] Buttons => new string[]
         {
-            if (_update.Message != null)
-            {
-                await _client.SendTextMessageAsync(_update.Message.Chat.Id, MessageText, replyMarkup: Keyboard.CreateInlineKeyboard(Butthons));
-            }
+            "Продовжити працювати над дипломом — ти вирішуєш не ризикувати та сконцентруватися на захисті.",
+            "Прийняти виклик і взятися за проєкт — диплом можна якось підтягнути потім, а такий шанс випадає не щодня."
+        };
+
+        public override async Task SendMessageAsync()
+        {
+            await _client.SendTextMessageAsync(_update.Message.Chat.Id, MessageText, replyMarkup: Keyboard.CreateReplyKeyboard(Buttons));
         }
     }
 }

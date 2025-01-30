@@ -4,16 +4,20 @@ namespace TelegramBot.Keyboards
 {
     internal static class Keyboard
     {
-        public static IReplyMarkup CreateInlineKeyboard(string[] options)
+        public static IReplyMarkup CreateReplyKeyboard(string[] options)
         {
-            var keyboard = new InlineKeyboardButton[options.Length][];
+            var keyboard = new KeyboardButton[options.Length][];
 
             for (int i = 0; i < options.Length; i++)
             {
-                keyboard[i] = new[] { InlineKeyboardButton.WithCallbackData(options[i], $"btn_{i}") };
+                keyboard[i] = new[] { new KeyboardButton(options[i]) };
             }
 
-            return new InlineKeyboardMarkup(keyboard);
+            return new ReplyKeyboardMarkup(keyboard)
+            {
+                ResizeKeyboard = true, 
+                OneTimeKeyboard = true 
+            };
         }
     }
 }

@@ -103,8 +103,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
-    <Compile Include="Helpers\Validator.cs" />
     <Compile Include="Keyboards\Keyboard.cs" />
+    <Compile Include="Messages\DontRisk.cs" />
     <Compile Include="Messages\MessageAbstract.cs" />
     <Compile Include="Messages\StartMessage.cs" />
     <Compile Include="Program.cs" />
@@ -115,5 +115,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
