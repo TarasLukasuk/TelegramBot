@@ -8,6 +8,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Messages;
+using TelegramBot.Services;
 
 namespace TelegramBot
 {
@@ -23,7 +24,7 @@ namespace TelegramBot
 
         private void RunBot()
         {
-            using (FileStream file = new FileStream(@"F:\TelegramBot\TelegramBot\ApiKey.json", FileMode.Open, FileAccess.Read))
+            using (FileStream file = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "ApiKey.json").Replace(@"\bin\Debug", string.Empty), FileMode.Open, FileAccess.Read))
             {
                 using (StreamReader reader = new StreamReader(file))
                 {
@@ -33,25 +34,25 @@ namespace TelegramBot
             }
         }
 
-
+        private BotMessageHandler botMessageHandler;
 
         private async Task HandlerUpDateAsync(ITelegramBotClient client, Update update, CancellationToken cancellation)
         {
             if (update.Type == UpdateType.Message && update.Message != null)
             {
-                switch (update.Message.Text.ToLower())
+                if (botMessageHandler == null)
                 {
-                    case "/start":
-                        StartMessage startMessage = new StartMessage(client, update);
-                        await startMessage.SendMessageAsync();
-                        break;
-                    case "продовжити працювати над дипломом — ти вирішуєш не ризикувати та сконцентруватися на захисті.":
-                        DontRisk dontRisk = new DontRisk(client, update);
-                        await dontRisk.SendMessageAsync();
-                        break;
+                    botMessageHandler = new BotMessageHandler();
+                    StartMessage startMessage = new StartMessage(client, update, botMessageHandler);
+
+                    botMessageHandler.OnMessage += startMessage.SendMessageAsync;
                 }
+
+                await botMessageHandler.SendMessageAsync(update.Message.Text);
             }
         }
+
+
 
         private static async Task HandlerErrorAsync(ITelegramBotClient client, Exception exception, HandleErrorSource handle, CancellationToken cancellation)
         {

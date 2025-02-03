@@ -104,11 +104,13 @@
   <ItemGroup>
     <Compile Include="Api.cs" />
     <Compile Include="Keyboards\Keyboard.cs" />
+    <Compile Include="Messages\AcceptChallenge.cs" />
     <Compile Include="Messages\DontRisk.cs" />
     <Compile Include="Messages\MessageAbstract.cs" />
     <Compile Include="Messages\StartMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BotMessageHandler .cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ApiKey.json" />

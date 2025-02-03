@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using TelegramBot.Services;
 
 namespace TelegramBot.Messages
 {
     internal abstract class MessageAbstract
     {
-        public MessageAbstract(ITelegramBotClient client, Update update)
+        public MessageAbstract(ITelegramBotClient client, Update update, BotMessageHandler botMessageHandler)
         {
             if (client is null)
             {
@@ -18,11 +19,17 @@ namespace TelegramBot.Messages
             {
                 throw new ArgumentNullException(nameof(update));
             }
+
+            if (botMessageHandler is null)
+            {
+                throw new ArgumentNullException(nameof(botMessageHandler));
+            }
         }
 
-        public abstract string MessageText { get; }
+        public abstract string MessageTextBot { get; }
         public abstract string[] Buttons { get; }
+        public abstract long ChatId { get; }
 
-        public abstract Task SendMessageAsync();
+        public abstract Task SendMessageAsync(string messageText);
     }
 }

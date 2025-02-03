@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TelegramBot.Keyboards;
+using TelegramBot.Services;
 
 namespace TelegramBot.Messages
 {
@@ -10,14 +11,16 @@ namespace TelegramBot.Messages
     {
         private readonly ITelegramBotClient _client;
         private readonly Update _update;
+        private readonly BotMessageHandler _botMessageHandler;
 
-        public StartMessage(ITelegramBotClient client, Update update) : base(client, update)
+        public StartMessage(ITelegramBotClient client, Update update, BotMessageHandler botMessageHandler) : base(client, update, botMessageHandler)
         {
             _client = client;
             _update = update;
+            _botMessageHandler = botMessageHandler;
         }
 
-        public override string MessageText =>
+        public override string MessageTextBot =>
             "Ти — студент четвертого курсу ІТ-спеціальності. До захисту диплома залишилося всього кілька місяців. " +
             "Всі твої одногрупники вже давно поринули в написання роботи, але сьогодні твій спокій порушило несподіване повідомлення. " +
             "На екрані ноутбука світиться лист: Запрошуємо вас на співбесіду до нашої компанії. Але перш ніж ми зможемо вас прийняти, " +
@@ -30,9 +33,33 @@ namespace TelegramBot.Messages
             "Прийняти виклик і взятися за проєкт — диплом можна якось підтягнути потім, а такий шанс випадає не щодня."
         };
 
-        public override async Task SendMessageAsync()
+        public override long ChatId => _update.Message.Chat.Id;
+
+        public override async Task SendMessageAsync(string messageText)
         {
-            await _client.SendTextMessageAsync(_update.Message.Chat.Id, MessageText, replyMarkup: Keyboard.CreateReplyKeyboard(Buttons));
+            switch (messageText)
+            {
+                case "/start":
+                    await _client.SendTextMessageAsync(ChatId, MessageTextBot, replyMarkup: Keyboard.CreateReplyKeyboard(Buttons));
+                    break;
+
+                case var text when text == Buttons[0]:
+                    DontRisk dontRisk = new DontRisk(_client, _update, _botMessageHandler);
+                    _botMessageHandler.OnMessage -= SendMessageAsync;
+                    _botMessageHandler.OnMessage += dontRisk.SendMessageAsync;
+
+                    await dontRisk.SendMessageAsync(messageText);
+                    break;
+
+                case var text when text == Buttons[1]:
+                    AcceptChallenge acceptChallenge = new AcceptChallenge(_client, _update, _botMessageHandler);
+                    _botMessageHandler.OnMessage -= SendMessageAsync;
+                    _botMessageHandler.OnMessage += acceptChallenge.SendMessageAsync;
+
+                    await acceptChallenge.SendMessageAsync(messageText);
+                    break;
+            }
+
         }
     }
 }
